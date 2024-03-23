@@ -1,10 +1,13 @@
 public class BPM
 {
-    static dur quarter, eighth, sixteenth, thirtysecond, sixtyfourth;
+    static dur quarter, eighth, sixteenth, thirtysecond, sixtyfourth, clockSignal;
 
-    public BPM(float tempo){set(tempo);}
+    public BPM(int tempo)
+    {
+        set(tempo);
+    }
 
-    public void set(float beat)
+    public void set(int beat)
     {
         60.0 / beat => float spb;
         spb::second => quarter;
@@ -12,12 +15,7 @@ public class BPM
         (spb / 4)::second => sixteenth;
         (spb / 8)::second => thirtysecond;
         (spb / 16)::second => sixtyfourth;
+        (spb / 24)::second => clockSignal;
+        <<< "BPM set to:", beat >>>;
     }
-}
-
-BPM bpm(120);
-
-if(me.args() == 1) {
-     bpm.set(Std.atoi(me.arg(0)));
-    <<< "BPM set to:", me.arg(0) >>>;
 }

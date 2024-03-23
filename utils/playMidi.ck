@@ -1,16 +1,27 @@
 
-BPM bpm(120);
-MIDIOut mout(0);
-Sync sync(bpm.quarter);
+BPM bpm;
+Sync sync;
+MIDIOut midiController(0);
+
+130 => int bpmValue;
+bpm.set(bpmValue);
+
+
+1 => int loopMode;
+0 => int midiChannel;
+64 => int midiRoot;
 
 me.arg(0) => string streamFileName;
 
-0 => int midiChannel;
-64 => int midiRoot;
-1 => int loopMode;
+<<< "streamFileName: ", streamFileName >>>;
+<<< "midiChannel: ", midiChannel >>>;
+<<< "midiRoot: ", midiRoot >>>;
 
-mout.stream(midiChannel, streamFileName, midiRoot, loopMode);
+spork ~ midiController.runClock();
+midiController.start();
+spork ~ midiController.stream(midiChannel, streamFileName, midiRoot, loopMode);
+3::second => now;
+midiController.stop();
+// midiController.close(0);
 
-// chuck %> chuck playMidi.ck:filename
-
-// chuck + sync.ck bpm.ck midi.ck playMidi.ck:./testStream.txt
+// chuck + utils/sync.ck utils/bpm.ck utils/midi.ck utils/playMidi.ck:./utils/testStream.txt

@@ -1,13 +1,34 @@
+
 public class MIDIOut 
 {
+    Sync sync;
     FileIO io;
     MidiOut mout;
     MidiMsg msg;
+
+    MidiMsg midiStart;
+    250 => midiStart.data1;
+    0 => midiStart.data2;
+    0 => midiStart.data3;
+
+    MidiMsg midiStop;
+    252 => midiStop.data1;
+    0 => midiStop.data2;
+    0 => midiStop.data3;
+
+    MidiMsg midiClockPulse;
+    248 => midiClockPulse.data1;
+    0 => midiClockPulse.data2;
+    0 => midiClockPulse.data3;
+
     BPM bpm;
     StringTokenizer st;
 
     144 => int noteOnType;
     128 => int noteOffType;
+
+    [0,1,2] @=> int voiceMIDIchan[];
+    9 => int drumMIDIchan;
 
     -1 => int port;
 
@@ -53,6 +74,21 @@ public class MIDIOut
         noteOff( channel );
         10::ms => now;
     }
+    
+    fun void start(){midiStart => mout.send;}
+    
+    fun void stop(){midiStop => mout.send;}
+
+    fun void runClock()
+    {
+        checkOpenPort();
+        while( true )
+        {
+            <<< "Sending MIDI clock pulse" >>>;
+            midiClockPulse => mout.send;
+            bpm.clockSignal => now;
+        }
+    }
     fun void stream( int channel, string filename, int midiRoot, int loop )
     {
         checkOpenPort();
@@ -70,6 +106,7 @@ public class MIDIOut
                 while (st.more())
                 {
                     st.next() => Std.atoi => int note;
+                    <<< "note", note >>>;
                     sendMIDI( channel, note + midiRoot, 127, bpm.sixteenth );
                 }
             }
@@ -77,4 +114,3 @@ public class MIDIOut
         }
     }
 }
-
