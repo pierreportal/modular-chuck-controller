@@ -1,5 +1,4 @@
 
-
 public class MIDIOut 
 {
     FileIO io;
@@ -8,7 +7,21 @@ public class MIDIOut
     Sync sync;
     BPM bpm;
     StringTokenizer st;
-    mout.open(0);
+
+    public void MIDIOut(int port)
+    {
+        openPort( port );
+    }
+
+    fun void openPort(int port)
+    {
+      if(!mout.open( port ))
+        {
+            <<< "Error: Could not open MIDI output device" >>>;
+            me.exit();
+        }
+        port => midi.port;
+    }
 
     private void noteOn( int channel, int note, int velocity )
     {

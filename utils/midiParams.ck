@@ -47,21 +47,11 @@ class MidiMsgType
     0 => noteOff.data3;
 }
 
-class MidiPort
-{
-    static int port;
-    public MidiPort(int portNumber)
-    {
-        portNumber => port;
-    }
-}
+
 public class MIDIParams
 {
-    MidiChannels channels();
-    MidiDrumNotes drumNotes();
-    MidiMsgType msgType();
-    MidiPort port(0);
+    static int port;
+    MidiChannels channels;
+    MidiDrumNotes drumNotes;
+    MidiMsgType msgType;
 }
-
-// MIDIParams midiParams;
-// <<<midiParams.drumNotes.ohh>>>;

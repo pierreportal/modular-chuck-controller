@@ -2,7 +2,7 @@ public class BPM
 {
     static dur quarter, eighth, sixteenth, thirtysecond, sixtyfourth, clockSignal;
 
-    public BPM(int tempo)
+    public void BPM(int tempo)
     {
         set(tempo);
     }
