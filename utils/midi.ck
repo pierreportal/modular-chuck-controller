@@ -1,97 +1,51 @@
 
+
 public class MIDIOut 
 {
-    Sync sync;
     FileIO io;
     MidiOut mout;
-    MidiMsg msg;
-
-    MidiMsg midiStart;
-    250 => midiStart.data1;
-    0 => midiStart.data2;
-    0 => midiStart.data3;
-
-    MidiMsg midiStop;
-    252 => midiStop.data1;
-    0 => midiStop.data2;
-    0 => midiStop.data3;
-
-    MidiMsg midiClockPulse;
-    248 => midiClockPulse.data1;
-    0 => midiClockPulse.data2;
-    0 => midiClockPulse.data3;
-
+    MIDIParams midi;
+    Sync sync;
     BPM bpm;
     StringTokenizer st;
-
-    144 => int noteOnType;
-    128 => int noteOffType;
-
-    [0,1,2] @=> int voiceMIDIchan[];
-    9 => int drumMIDIchan;
-
-    -1 => int port;
-
-    public MIDIOut(int port){openPort( port );}
-
-    fun void openPort(int port)
-    {
-      if(!mout.open( port ))
-        {
-            <<< "Error: Could not open MIDI output device" >>>;
-            me.exit();
-        }
-        port => this.port;
-    }
+    mout.open(0);
 
     private void noteOn( int channel, int note, int velocity )
     {
-        noteOnType + channel => msg.data1;
-        note => msg.data2;
-        velocity => msg.data3;
-        mout.send( msg );
+        channel +=> midi.msgType.noteOn.data1;
+        note => midi.msgType.noteOn.data2;
+        velocity => midi.msgType.noteOn.data3;
+        mout.send( midi.msgType.noteOn );
     }
     private void noteOff( int channel)
     {
-        noteOffType + channel => msg.data1;
-        mout.send( msg );
-    }
-
-    private checkOpenPort()
-    {
-        if(port < 0) {
-            <<< "Error: No MIDI output port open" >>>;
-            me.exit();
-        }
+        channel +=> midi.msgType.noteOff.data1;
+        mout.send( midi.msgType.noteOff );
     }
 
     fun void sendMIDI( int channel, int note, int velocity, dur duration )
     {
-        <<< "Sending MIDI message" >>>;
-        checkOpenPort();
         noteOn( channel, note, velocity );
         duration - 10::ms => now;
         noteOff( channel );
         10::ms => now;
     }
     
-    fun void start(){midiStart => mout.send;}
+    fun void start(){midi.msgType.start => mout.send;}
     
-    fun void stop(){midiStop => mout.send;}
+    fun void stop(){midi.msgType.stop => mout.send;}
 
     fun void runClock()
     {
-        checkOpenPort();
         while( true )
         {
             <<< "Sending MIDI clock pulse" >>>;
-            midiClockPulse => mout.send;
+            midi.msgType.clockPulse => mout.send;
             bpm.clockSignal => now;
         }
     }
     fun void stream( int channel, string filename, int midiRoot, int loop )
     {
-        checkOpenPort();
         if(!io.open( filename, FileIO.READ )) 
         {
             <<< "Error: Could not open file. Make sure the VM is runing in the same directory or provide absolute path" >>>;
