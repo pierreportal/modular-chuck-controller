@@ -26,9 +26,9 @@ public class MIDIOut
     fun void sendMIDI( int channel, int note, int velocity, dur duration )
     {
         noteOn( channel, note, velocity );
-        duration - 10::ms => now;
+        duration - 20::ms => now;
         noteOff( channel );
-        10::ms => now;
+        20::ms => now;
     }
     
     fun void start(){midi.msgType.start => mout.send;}
@@ -39,7 +39,6 @@ public class MIDIOut
     {
         while( true )
         {
-            <<< "Sending MIDI clock pulse" >>>;
             midi.msgType.clockPulse => mout.send;
             bpm.clockSignal => now;
         }
@@ -60,7 +59,6 @@ public class MIDIOut
                 while (st.more())
                 {
                     st.next() => Std.atoi => int note;
-                    <<< "note", note >>>;
                     sendMIDI( channel, note + midiRoot, 127, bpm.sixteenth );
                 }
             }

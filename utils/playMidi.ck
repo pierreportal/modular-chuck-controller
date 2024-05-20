@@ -3,12 +3,13 @@ BPM bpm;
 Sync sync;
 MIDIOut midiController;
 
-130 => int bpmValue;
+140 => int bpmValue;
 bpm.set(bpmValue);
 
 1 => int loopMode;
 0 => int midiChannel;
-64 => int midiRoot;
+16 => int octave;
+2 * octave => int midiRoot;
 
 me.arg(0) => string streamFileName;
 
@@ -19,13 +20,12 @@ me.arg(0) => string streamFileName;
 spork ~ midiController.runClock();
 midiController.start();
 spork ~ midiController.stream(midiChannel, streamFileName, midiRoot, loopMode);
-3::second => now;
+30::second => now;
 midiController.stop();
-
-// midiController.close(0);
 
 // chuck + utils/sync.ck utils/bpm.ck utils/midi.ck utils/playMidi.ck:./utils/testStream.txt
 
+// ❯ chuck initialize.ck:./utils/testStream.txt
 
 MIDIParams midiParams;
 

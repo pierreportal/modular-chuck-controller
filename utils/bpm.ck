@@ -15,7 +15,7 @@ public class BPM
         (spb / 4)::second => sixteenth;
         (spb / 8)::second => thirtysecond;
         (spb / 16)::second => sixtyfourth;
-        (spb / 24)::second => clockSignal;
+        (spb / 16)::second => clockSignal;
         <<< "BPM set to:", beat >>>;
     }
 }
